@@ -4,9 +4,10 @@ const response = require('../../network/response')
 const controller = require('./controller')
 
 router.get('/', (req, res) => {
-    controller.getMessages()
+    const { user } = req.query
+    const filterMessages = user || null
+    controller.getMessages(filterMessages)
         .then( (messageList) => {
-            console.log(messageList)
             response.success(req, res, messageList, 200)
         })
         .catch( (error) => {
@@ -22,6 +23,18 @@ router.post('/', (req, res) => {
         })
         .catch( () => {
             response.error(req, res, 'Informacion Invalida', 400, 'Simulacro')
+        })
+})
+
+router.patch('/:id', (req, res) => {
+    const { id } = req.params
+    const { message } = req.body
+    controller.updateMessage(id, message)
+        .then( (data) => {
+            response.success(req, res, data, 200)
+        })
+        .catch( (error) => {
+            response.error(req, res, 'Error Interno', 500, error)
         })
 })
 
